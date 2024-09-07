@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Calculator</title>
+</head>
+<body>
+    <div class="calculator">
+        <h1></h1>
+        <div class="display">0</div>
+        <button class="button">AC</button>
+        <button class="button">DEL</button>
+        <button class="button">%</button>
+        <button class="button operator">/</button>
+        <button class="button">7</button>
+        <button class="button">8</button>
+        <button class="button">9</button>
+        <button class="button operator">*</button>
+        <button class="button">4</button>
+        <button class="button">5</button>
+        <button class="button">6</button>
+        <button class="button operator">-</button>
+        <button class="button">1</button>
+        <button class="button">2</button>
+        <button class="button">3</button>
+        <button class="button operator">+</button>
+        <button class="button">00</button>
+        <button class="button">0</button>
+        <button class="button">.</button>
+        <button class="button equals">=</button>
+    </div>
+
+  <script>
+    const buttons = document.querySelectorAll('.button');
+    const display = document.querySelector('.display');
+    let currentInput = '';
+    let lastOperator = '';
+
+    function updateDisplay(value) {
+        display.textContent = value || '0';
+    }
+
+  
+    function calculateExpression(expression) {
+        try {
+            if (/\/0(?!\.)/.test(expression)) {
+                throw new Error("Zero Division Error");
+            }
+            let result = new Function(`return ${expression}`)();
+
+            result = Math.round(result * 100) / 100;
+
+            updateDisplay(result);
+            currentInput = result.toString();  
+        } catch (error) {
+            if (error.message === "Zero Division Error") {
+                updateDisplay("Error: Division by 0");
+            } else {
+                updateDisplay("Error");
+            }
+            currentInput = '';
+        }
+    }
+
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            const value = button.textContent;
+
+            if (value === 'AC') {
+                currentInput = '';
+                lastOperator = '';
+                updateDisplay('0');
+            } else if (value === 'DEL') {
+                currentInput = currentInput.slice(0, -1);
+                updateDisplay(currentInput);
+            } else if (value === '=') {
+              
+                calculateExpression(currentInput);
+            } else {
+               
+                if (['+', '-', '*', '/'].includes(value)) {
+                    if (['+', '-', '*', '/'].includes(lastOperator)) {
+                        return; 
+                    }
+                    lastOperator = value;
+                } else {
+                    lastOperator = '';
+                }
+
+               
+                currentInput += value;
+                updateDisplay(currentInput);
+            }
+        });
+    });
+</script>
+
+    
+</body>
+</html>
